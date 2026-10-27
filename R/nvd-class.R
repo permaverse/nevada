@@ -234,10 +234,13 @@ is_nvd <- function(obj) {
 sample2_sbm <- function(n, nv, p1, b1, p2 = p1, b2 = b1, seed = NULL) {
   withr::local_seed(seed)
   sim <- n |>
-    purrr::rerun(
-      x = igraph::sample_sbm(nv, p1, b1),
-      y = igraph::sample_sbm(nv, p2, b2)
-    ) |>
+    seq_len() |>
+    purrr::map(\(i) {
+      list(
+        x = igraph::sample_sbm(nv, p1, b1),
+        y = igraph::sample_sbm(nv, p2, b2)
+      )
+    }) |>
     purrr::transpose() |>
     purrr::map(as_nvd)
 }
